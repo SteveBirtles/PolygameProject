@@ -17,17 +17,12 @@ class Game : public olc::PixelGameEngine {
     float x;
     float y;
     float dx;
-    float dy;
-    float r;
-    bool expired;
-    Invader(float givenX, float givenY, float givenDx, float givenDy,
-            float givenR) {
+    float dy;    
+    Invader(float givenX, float givenY, float givenDx, float givenDy) {
       x = givenX;
       y = givenY;
       dx = givenDx;
-      dy = givenDy;
-      r = givenR;
-      expired = false;
+      dy = givenDy;      
     }
     void update(float frameLength) {
       x += dx * frameLength;
@@ -54,7 +49,7 @@ class Game : public olc::PixelGameEngine {
 
     for (auto i = 0; i <= 100; i++) {
       invaders.push_back(Invader(rand() % WINDOW_WIDTH, rand() % WINDOW_WIDTH,
-                                 rand() % 100 - 50, rand() % 100 - 50, 32));
+                                 rand() % 100 - 50, rand() % 100 - 50));
     }
 
     return true;

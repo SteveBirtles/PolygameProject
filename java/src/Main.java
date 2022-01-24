@@ -5,66 +5,27 @@ import javafx.scene.*;
 import javafx.scene.image.*;
 import javafx.scene.canvas.*;
 import javafx.animation.AnimationTimer;
-import java.util.HashSet;
-import java.util.Random;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+
+import java.util.HashSet;
+import java.util.Random;
 import java.util.Set;
 
 public class Main {
 
-    public static class FrameRegulator {
-
-        private Integer frameCounter = 0;
-        private Long tick = 0L;
-        private double frameLength = 0;
-        private double fpsTimer = 0;
-        private int fps = 0;
-
-        public void updateFPS(long now, GraphicsContext gc) {
-
-            Long tock = now / 1000000;
-            if (tick != 0) {
-                frameLength = (tock - tick) / 1000.0;
-            }
-            tick = tock;
-
-            frameCounter += 1;
-            fpsTimer += frameLength;
-            if (fpsTimer >= 1) {
-                fps = frameCounter;
-                frameCounter = 0;
-                fpsTimer -= 1;
-            }
-
-            if (fps > 0) {
-                gc.strokeText("Java (JavaFX)   " + fps + " FPS", 20, 20);
-            }
-        }
-
-        public double getFrameLength() {
-            return frameLength;
-        }
-
-    }
-
     public static class Invader {
 
-        protected Image image;
-        protected double x;
-        protected double y;
-        protected double dx;
-        protected double dy;
-        protected double r;
-        protected boolean expired;
+        private double x;
+        private double y;
+        private double dx;
+        private double dy;
 
-        public Invader(double x, double y, double r, Image image) {
+        public Invader(double x, double y) {
             this.x = x;
             this.y = y;
-            this.image = image;
-            this.r = r;
         }
 
         public void setVelocity(double dx, double dy) {
@@ -78,10 +39,6 @@ public class Main {
 
         public double getY() {
             return y;
-        }
-
-        public Image getImage() {
-            return image;
         }
 
         public void update(double frameLength) {
@@ -98,24 +55,6 @@ public class Main {
                 y -= Main.WINDOW_HEIGHT + 200;
 
         }
-
-        public static void clearUpExired(Set<Invader> entities) {
-            var expiredEntityRemover = entities.iterator();
-            while (expiredEntityRemover.hasNext()) {
-                var s = expiredEntityRemover.next();
-                if (s.expired)
-                    expiredEntityRemover.remove();
-            }
-        }
-
-        public boolean collidesWith(Invader other) {
-            if (Math.pow(x - other.x, 2) + Math.pow(y - other.y, 2) < Math.pow(r + other.r, 2)) {
-                return true;
-            } else {
-                return false;
-            }
-        }
-
     }
 
     public static final int WINDOW_WIDTH = 1920;
@@ -124,10 +63,15 @@ public class Main {
 
     static Set<KeyCode> keysPressed = new HashSet<>();
 
+    private static Integer frameCounter = 0;
+    private static Long tick = 0L;
+    private static double frameLength = 0;
+    private static double fpsTimer = 0;
+    private static int fps = 0;
+
     public static void start() {
         System.out.println("Application Starting...");
 
-        var fr = new FrameRegulator();
         var rnd = new Random();
 
         var root = new Group();
@@ -135,12 +79,11 @@ public class Main {
         var scene = new Scene(root);
         var canvas = new Canvas();
 
-        stage.setTitle("JavaFX Canvas Demo");
+        stage.setTitle("Polygame Project - Java");
         stage.setResizable(false);
         stage.setFullScreen(true);
         stage.setScene(scene);
         stage.setOnCloseRequest(we -> {
-            System.out.println("Close button was clicked!");
             System.out.println("Terminating Application...");
             System.exit(0);
         });
@@ -156,23 +99,35 @@ public class Main {
         root.getChildren().add(canvas);
 
         var gc = canvas.getGraphicsContext2D();
-        gc.setStroke(Color.WHITE);
         gc.setFont(new Font("Arial", 14));
 
-        var image = new Image(resourcesPath + "sprite.png");
+        var invaderImage = new Image(resourcesPath + "sprite.png");
 
         var invaders = new HashSet<Invader>();
 
         for (var i = 0; i <= 100; i++) {
-            var s = new Invader(rnd.nextInt(WINDOW_WIDTH), rnd.nextInt(WINDOW_HEIGHT), 32, image);
+            var s = new Invader(rnd.nextInt(WINDOW_WIDTH), rnd.nextInt(WINDOW_HEIGHT));
             s.setVelocity(rnd.nextDouble() * 100 - 50, rnd.nextDouble() * 100 - 50);
             invaders.add(s);
-
         }
 
         new AnimationTimer() {
             @Override
             public void handle(long now) {
+
+                Long tock = now / 1000000;
+                if (tick != 0) {
+                    frameLength = (tock - tick) / 1000.0;
+                }
+                tick = tock;
+
+                frameCounter += 1;
+                fpsTimer += frameLength;
+                if (fpsTimer >= 1) {
+                    fps = frameCounter;
+                    frameCounter = 0;
+                    fpsTimer -= 1;
+                }
 
                 /* INPUT */
 
@@ -186,9 +141,8 @@ public class Main {
                 /* PROCESS */
 
                 for (var s : invaders) {
-                    s.update(fr.getFrameLength());
+                    s.update(frameLength);
                 }
-                Invader.clearUpExired(invaders);
 
                 /* OUTPUT */
 
@@ -196,10 +150,14 @@ public class Main {
                 gc.fillRect(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
 
                 for (var s : invaders) {
-                    gc.drawImage(s.getImage(), s.getX() - s.getImage().getWidth() / 2,
-                            s.getY() - s.getImage().getHeight() / 2);
+                    gc.drawImage(invaderImage, s.getX() - invaderImage.getWidth() / 2,
+                            s.getY() - invaderImage.getHeight() / 2);
                 }
-                fr.updateFPS(now, gc);
+
+                if (fps > 0) {
+                    gc.setFill(Color.WHITE);
+                    gc.fillText("Java (JavaFX)   " + fps + " FPS", 20, 20);
+                }
 
             }
         }.start();

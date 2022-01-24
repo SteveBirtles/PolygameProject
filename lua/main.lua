@@ -75,7 +75,7 @@ function love.draw()
     end
 
     if fps > 0 then
-        love.graphics.print("Lua (Love2D)   " + fps .. " FPS", 10, 10)
+        love.graphics.print("Lua (Love2D)   " .. fps .. " FPS", 10, 10)
     end
 
 end
