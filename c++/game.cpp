@@ -10,6 +10,7 @@ class Game : public olc::PixelGameEngine {
   float timer = 0;
   int frames = 0;
   int fps;
+bool quit = false;
 
   struct Invader {
     float x;
@@ -37,22 +38,12 @@ class Game : public olc::PixelGameEngine {
   std::vector<Invader> invaders;
 
   void inputs() {
-    /*
-      Game controls goes here
-    */
-
-    if (GetKey(olc::Key::SPACE).bHeld) {
-      std::cout << "Space!" << std::endl;
-    }
-    if (GetMouse(0).bHeld) {
-      std::cout << "Click!" << std::endl;
+    if (GetKey(olc::Key::ESCAPE).bPressed) {
+      quit = true;
     }
   }
 
   void processes() {
-    /*
-      Game logic goes here
-    */
     for (auto& invader : invaders) {
       invader.update(GetElapsedTime());
     }
@@ -61,10 +52,6 @@ class Game : public olc::PixelGameEngine {
   void outputs() {
     SetPixelMode(olc::Pixel::NORMAL);
 
-    /*
-      Game graphics drawn here
-    */
-
     for (auto& invader : invaders) {
       DrawDecal({invader.x - invaderSprite->width / 2,
                  invader.y - invaderSprite->height / 2},
@@ -72,9 +59,10 @@ class Game : public olc::PixelGameEngine {
     }
 
     if (fps > 0) {
-      auto fpsPosition = olc::vi2d(20, 20);
-      DrawStringDecal(fpsPosition, "C++ (olcPixelGameEngine)   " +
-                                       std::to_string(fps) + " FPS");
+      if (fps > 0) {
+        DrawStringDecal(olc::vi2d(20, 20), "C++ (olcPixelGameEngine)   " +
+                                               std::to_string(fps) + " FPS");
+      }
     }
   }
 
@@ -97,8 +85,8 @@ class Game : public olc::PixelGameEngine {
     return true;
   }
 
-  bool OnUserUpdate(float fElapsedTime) override {
-    timer += fElapsedTime;
+  bool OnUserUpdate(float frameLength) override {
+    timer += frameLength;
     frames++;
     if (timer > 1.0) {
       fps = frames;
@@ -110,11 +98,8 @@ class Game : public olc::PixelGameEngine {
     processes();
     outputs();
 
-    if (GetKey(olc::Key::ESCAPE).bPressed) {
-      return false;
-    } else {
-      return true;
-    }
+    return !quit;
+
   }
 
   bool OnUserDestroy() override {

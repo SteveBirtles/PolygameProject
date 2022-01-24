@@ -13,6 +13,7 @@ import javafx.scene.text.Font;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
+import java.util.ArrayList;
 
 public class Main {
 
@@ -20,28 +21,17 @@ public class Main {
     public static final int WINDOW_HEIGHT = 1080;
 
     public static class Invader {
+        public double x;
+        public double y;
+        public double dx;
+        public double dy;
 
-        private double x;
-        private double y;
-        private double dx;
-        private double dy;
-
-        public Invader(double x, double y) {
+        public Invader(double x, double y,
+                double dx, double dy) {
             this.x = x;
             this.y = y;
-        }
-
-        public void setVelocity(double dx, double dy) {
             this.dx = dx;
             this.dy = dy;
-        }
-
-        public double getX() {
-            return x;
-        }
-
-        public double getY() {
-            return y;
         }
 
         public void update(double frameLength) {
@@ -62,7 +52,7 @@ public class Main {
 
     private static final String resourcesPath = "file:" + System.getProperty("user.dir") + "/resources/";
 
-    static Set<KeyCode> keysPressed = new HashSet<>();
+    private static Set<KeyCode> keysPressed = new HashSet<>();
 
     private static Integer frameCounter = 0;
     private static Long tick = 0L;
@@ -70,7 +60,7 @@ public class Main {
     private static double fpsTimer = 0;
     private static int fps = 0;
 
-    private static Set<Invader> invaders;
+    private static ArrayList<Invader> invaders;
     private static Image invaderImage;
 
     private static void inputs() {
@@ -96,8 +86,8 @@ public class Main {
         gc.fillRect(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
 
         for (var s : invaders) {
-            gc.drawImage(invaderImage, s.getX() - invaderImage.getWidth() / 2,
-                    s.getY() - invaderImage.getHeight() / 2);
+            gc.drawImage(invaderImage, s.x - invaderImage.getWidth() / 2,
+                    s.y - invaderImage.getHeight() / 2);
         }
 
         if (fps > 0) {
@@ -139,12 +129,14 @@ public class Main {
         gc.setFont(new Font("Arial", 14));
 
         invaderImage = new Image(resourcesPath + "sprite.png");
-        invaders = new HashSet<Invader>();
+        invaders = new ArrayList<Invader>();
 
         for (var i = 0; i <= 100; i++) {
-            var s = new Invader(rnd.nextInt(WINDOW_WIDTH), rnd.nextInt(WINDOW_HEIGHT));
-            s.setVelocity(rnd.nextDouble() * 100 - 50, rnd.nextDouble() * 100 - 50);
-            invaders.add(s);
+            invaders.add(new Invader(
+                    rnd.nextInt(WINDOW_WIDTH),
+                    rnd.nextInt(WINDOW_HEIGHT),
+                    rnd.nextDouble() * 100 - 50,
+                    rnd.nextDouble() * 100 - 50));
         }
 
         new AnimationTimer() {

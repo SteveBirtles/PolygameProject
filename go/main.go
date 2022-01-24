@@ -19,8 +19,8 @@ import (
 	"golang.org/x/image/font"
 )
 
-const screenWidth = 1920
-const screenHeight = 1080
+const WINDOW_WIDTH = 1920
+const WINDOW_HEIGHT = 1080
 
 type Invader struct {
 	x  float64
@@ -29,12 +29,30 @@ type Invader struct {
 	dy float64
 }
 
+func (invader *Invader) Update() {
+	invader.x += invader.dx * frameLength
+	invader.y += invader.dy * frameLength
+	if invader.x < -100 {
+		invader.x += WINDOW_WIDTH + 200
+	}
+	if invader.y < -100 {
+		invader.y += WINDOW_HEIGHT + 200
+	}
+	if invader.x > WINDOW_WIDTH + 100 {
+		invader.x -= WINDOW_WIDTH + 200
+	}
+	if invader.y > WINDOW_HEIGHT+100 {
+		invader.y -= WINDOW_HEIGHT + 200
+	}
+}
+
+var invaders []Invader
+
 var (
 	frames        = 0
 	second        = time.Tick(time.Second)
 	window        *pixelgl.Window
 	frameLength   float64
-	invaders      []Invader
 	invaderSprite *pixel.Sprite
 	quit          = false
 	textRenderer  *text.Text
@@ -82,9 +100,10 @@ func initiate() {
 	var initError error
 
 	cfg := pixelgl.WindowConfig{
-		Bounds:  pixel.R(0, 0, screenWidth, screenHeight),
+		Bounds:  pixel.R(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT),
 		VSync:   true,
-		Monitor: pixelgl.PrimaryMonitor(),
+		Monitor: pixelgl.PrimaryMonitor(),		
+		Title: "",
 	}
 
 	window, initError = pixelgl.NewWindow(cfg)
@@ -114,14 +133,12 @@ func initiate() {
 
 	for i := 1; i <= 100; i++ {
 
-		invader := Invader{
-			x:  r.Float64() * screenWidth,
-			y:  r.Float64() * screenHeight,
+		invaders = append(invaders,Invader{
+			x:  r.Float64() * WINDOW_WIDTH, 
+			y:  r.Float64() * WINDOW_HEIGHT,
 			dx: r.Float64()*100 - 50,
 			dy: r.Float64()*100 - 50,
-		}
-
-		invaders = append(invaders, invader)
+		} )
 
 	}
 
@@ -137,23 +154,7 @@ func inputs() {
 func processes() {
 
 	for i := range invaders {
-
-		invaders[i].x += invaders[i].dx * frameLength
-		invaders[i].y += invaders[i].dy * frameLength
-
-		if invaders[i].x < -100 {
-			invaders[i].x += screenWidth + 200
-		}
-		if invaders[i].y < -100 {
-			invaders[i].y += screenHeight + 200
-		}
-		if invaders[i].x > screenWidth+100 {
-			invaders[i].x -= screenWidth + 200
-		}
-		if invaders[i].y > screenHeight+100 {
-			invaders[i].y -= screenHeight + 200
-		}
-
+		invaders[i].Update();
 	}
 
 }
@@ -164,15 +165,17 @@ func outputs() {
 	textRenderer.Clear()
 
 	for i := range invaders {
-
-		matrix := pixel.IM.Moved(pixel.Vec{X: invaders[i].x, Y: invaders[i].y})
-
+		matrix := pixel.IM.Moved(
+		  pixel.Vec{
+			X: invaders[i].x - invaderSprite.Picture().Bounds().W() / 2, 
+			Y: invaders[i].y - invaderSprite.Picture().Bounds().H() / 2,
+		  })
 		invaderSprite.Draw(window, matrix)
-
-	}
+	  }
+	
 
 	if fps > 0 {
-		textRenderer.Dot = pixel.V(20, screenHeight-20)
+		textRenderer.Dot = pixel.V(20, WINDOW_HEIGHT-20)
 		textRenderer.WriteString(fmt.Sprintf("%s   %d %s", "Go (Pixel by Faiface)", fps, "FPS"))
 		textRenderer.Draw(window, pixel.IM)
 	}
