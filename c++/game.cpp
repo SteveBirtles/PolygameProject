@@ -1,12 +1,10 @@
 #define OLC_PGE_APPLICATION
 #include "olcPixelGameEngine.h"
 
-const int WINDOW_WIDTH = 1920;
-const int WINDOW_HEIGHT = 1080;
-
 class Game : public olc::PixelGameEngine {
  public:
-  Game() { sAppName = "Polygame Project - C++"; }
+  const static int WINDOW_WIDTH = 1920;
+  const static int WINDOW_HEIGHT = 1080;
 
  private:
   float timer = 0;
@@ -17,12 +15,12 @@ class Game : public olc::PixelGameEngine {
     float x;
     float y;
     float dx;
-    float dy;    
+    float dy;
     Invader(float givenX, float givenY, float givenDx, float givenDy) {
       x = givenX;
       y = givenY;
       dx = givenDx;
-      dy = givenDy;      
+      dy = givenDy;
     }
     void update(float frameLength) {
       x += dx * frameLength;
@@ -37,43 +35,6 @@ class Game : public olc::PixelGameEngine {
   olc::Sprite* invaderSprite;
   olc::Decal* invaderDecal;
   std::vector<Invader> invaders;
-
- public:
-  bool OnUserCreate() override {
-    /*
-      Load resources here
-    */
-    std::string path = "./resources/";
-    invaderSprite = new olc::Sprite(path + "sprite.png");
-    invaderDecal = new olc::Decal(invaderSprite);
-
-    for (auto i = 0; i <= 100; i++) {
-      invaders.push_back(Invader(rand() % WINDOW_WIDTH, rand() % WINDOW_WIDTH,
-                                 rand() % 100 - 50, rand() % 100 - 50));
-    }
-
-    return true;
-  }
-
-  bool OnUserUpdate(float fElapsedTime) override {
-    timer += fElapsedTime;
-    frames++;
-    if (timer > 1.0) {
-      fps = frames;
-      frames = 0;
-      timer -= 1;
-    }
-
-    inputs();
-    processes();
-    outputs();
-
-    if (GetKey(olc::Key::ESCAPE).bPressed) {
-      return false;
-    } else {
-      return true;
-    }
-  }
 
   void inputs() {
     /*
@@ -112,7 +73,47 @@ class Game : public olc::PixelGameEngine {
 
     if (fps > 0) {
       auto fpsPosition = olc::vi2d(20, 20);
-      DrawStringDecal(fpsPosition, "C++ (olcPixelGameEngine)   " + std::to_string(fps) + " FPS");
+      DrawStringDecal(fpsPosition, "C++ (olcPixelGameEngine)   " +
+                                       std::to_string(fps) + " FPS");
+    }
+  }
+
+ public:
+  Game() { sAppName = "Polygame Project - C++"; }
+
+  bool OnUserCreate() override {
+    /*
+      Load resources here
+    */
+    std::string path = "./resources/";
+    invaderSprite = new olc::Sprite(path + "sprite.png");
+    invaderDecal = new olc::Decal(invaderSprite);
+
+    for (auto i = 0; i <= 100; i++) {
+      invaders.push_back(Invader(rand() % WINDOW_WIDTH, rand() % WINDOW_WIDTH,
+                                 rand() % 100 - 50, rand() % 100 - 50));
+    }
+
+    return true;
+  }
+
+  bool OnUserUpdate(float fElapsedTime) override {
+    timer += fElapsedTime;
+    frames++;
+    if (timer > 1.0) {
+      fps = frames;
+      frames = 0;
+      timer -= 1;
+    }
+
+    inputs();
+    processes();
+    outputs();
+
+    if (GetKey(olc::Key::ESCAPE).bPressed) {
+      return false;
+    } else {
+      return true;
     }
   }
 
@@ -124,6 +125,7 @@ class Game : public olc::PixelGameEngine {
 
 int main() {
   Game game;
-  if (game.Construct(WINDOW_WIDTH, WINDOW_HEIGHT, 1, 1, true)) game.Start();
+  if (game.Construct(game.WINDOW_WIDTH, game.WINDOW_HEIGHT, 1, 1, true))
+    game.Start();
   return 0;
 }

@@ -1,13 +1,12 @@
 WINDOW_WIDTH = 1920
 WINDOW_HEIGHT = 1080
 
-function newInvader(x, y, dx, dy, r)
+function newInvader(x, y, dx, dy)
     local invader = {}
     invader.x = x
     invader.y = y
     invader.dx = dx
     invader.dy = dy
-    invader.r = r
     return invader
 end
 
@@ -26,7 +25,7 @@ function love.load()
         local y = math.random(0, WINDOW_HEIGHT)
         local dx = math.random(-50, 50)
         local dy = math.random(-50, 50)
-        table.insert(invaders, newInvader(x, y, dx, dy, 32))
+        table.insert(invaders, newInvader(x, y, dx, dy))
     end
 
 end

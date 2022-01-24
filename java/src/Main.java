@@ -16,6 +16,9 @@ import java.util.Set;
 
 public class Main {
 
+    public static final int WINDOW_WIDTH = 1920;
+    public static final int WINDOW_HEIGHT = 1080;
+
     public static class Invader {
 
         private double x;
@@ -57,8 +60,6 @@ public class Main {
         }
     }
 
-    public static final int WINDOW_WIDTH = 1920;
-    public static final int WINDOW_HEIGHT = 1080;
     private static final String resourcesPath = "file:" + System.getProperty("user.dir") + "/resources/";
 
     static Set<KeyCode> keysPressed = new HashSet<>();
@@ -68,6 +69,42 @@ public class Main {
     private static double frameLength = 0;
     private static double fpsTimer = 0;
     private static int fps = 0;
+
+    private static Set<Invader> invaders;
+    private static Image invaderImage;
+
+    private static void inputs() {
+
+        for (var k : keysPressed) {
+            if (k == KeyCode.ESCAPE) {
+                System.out.println("Terminating Application...");
+                System.exit(0);
+            }
+        }
+
+    }
+
+    private static void processes() {
+        for (var s : invaders) {
+            s.update(frameLength);
+        }
+
+    }
+
+    private static void outputs(GraphicsContext gc) {
+        gc.setFill(Color.BLACK);
+        gc.fillRect(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
+
+        for (var s : invaders) {
+            gc.drawImage(invaderImage, s.getX() - invaderImage.getWidth() / 2,
+                    s.getY() - invaderImage.getHeight() / 2);
+        }
+
+        if (fps > 0) {
+            gc.setFill(Color.WHITE);
+            gc.fillText("Java (JavaFX)   " + fps + " FPS", 20, 20);
+        }
+    }
 
     public static void start() {
         System.out.println("Application Starting...");
@@ -101,9 +138,8 @@ public class Main {
         var gc = canvas.getGraphicsContext2D();
         gc.setFont(new Font("Arial", 14));
 
-        var invaderImage = new Image(resourcesPath + "sprite.png");
-
-        var invaders = new HashSet<Invader>();
+        invaderImage = new Image(resourcesPath + "sprite.png");
+        invaders = new HashSet<Invader>();
 
         for (var i = 0; i <= 100; i++) {
             var s = new Invader(rnd.nextInt(WINDOW_WIDTH), rnd.nextInt(WINDOW_HEIGHT));
@@ -129,35 +165,9 @@ public class Main {
                     fpsTimer -= 1;
                 }
 
-                /* INPUT */
-
-                for (var k : keysPressed) {
-                    if (k == KeyCode.ESCAPE) {
-                        System.out.println("Terminating Application...");
-                        System.exit(0);
-                    }
-                }
-
-                /* PROCESS */
-
-                for (var s : invaders) {
-                    s.update(frameLength);
-                }
-
-                /* OUTPUT */
-
-                gc.setFill(Color.BLACK);
-                gc.fillRect(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
-
-                for (var s : invaders) {
-                    gc.drawImage(invaderImage, s.getX() - invaderImage.getWidth() / 2,
-                            s.getY() - invaderImage.getHeight() / 2);
-                }
-
-                if (fps > 0) {
-                    gc.setFill(Color.WHITE);
-                    gc.fillText("Java (JavaFX)   " + fps + " FPS", 20, 20);
-                }
+                inputs();
+                processes();
+                outputs(gc);
 
             }
         }.start();

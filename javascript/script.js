@@ -60,7 +60,6 @@ function processes() {
     if (invader.y < -100) invader.y += windowHeight + 200;
     if (invader.x > 100 + windowWidth) invader.x -= windowWidth + 200;
     if (invader.y > 100 + windowHeight) invader.y -= windowHeight + 200;
-
   }
 }
 
