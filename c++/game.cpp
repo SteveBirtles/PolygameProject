@@ -59,10 +59,8 @@ bool quit = false;
     }
 
     if (fps > 0) {
-      if (fps > 0) {
-        DrawStringDecal(olc::vi2d(20, 20), "C++ (olcPixelGameEngine)   " +
+      DrawStringDecal(olc::vi2d(20, 20), "C++ (olcPixelGameEngine)   " +
                                                std::to_string(fps) + " FPS");
-      }
     }
   }
 
