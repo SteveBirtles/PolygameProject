@@ -47,15 +47,16 @@ func (invader *Invader) Update() {
 }
 
 var invaders []Invader
+var invaderSprite *pixel.Sprite
+
+var window *pixelgl.Window	
+var textRenderer *text.Text
 
 var (
 	frames        = 0
 	second        = time.Tick(time.Second)
-	window        *pixelgl.Window
-	frameLength   float64
-	invaderSprite *pixel.Sprite
+	frameLength   float64	
 	quit          = false
-	textRenderer  *text.Text
 	fps           int
 )
 
