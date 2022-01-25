@@ -97,8 +97,7 @@ class Game : public olc::PixelGameEngine {
 
   }
 
-  bool OnUserDestroy() override {
-    std::cout << "Closing game" << std::endl;
+  bool OnUserDestroy() override {    
     return true;
   }
 };
