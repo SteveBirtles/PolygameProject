@@ -10,7 +10,7 @@ class Game : public olc::PixelGameEngine {
   float timer = 0;
   int frames = 0;
   int fps;
-bool quit = false;
+  bool quit = false;
 
   struct Invader {
     float x;
@@ -68,9 +68,6 @@ bool quit = false;
   Game() { sAppName = "Polygame Project - C++"; }
 
   bool OnUserCreate() override {
-    /*
-      Load resources here
-    */
     std::string path = "./resources/";
     invaderSprite = new olc::Sprite(path + "sprite.png");
     invaderDecal = new olc::Decal(invaderSprite);
