@@ -130,15 +130,15 @@ func initiate() {
 	invaderPic := pixel.PictureDataFromImage(invaderImage)
 	invaderSprite = pixel.NewSprite(invaderPic, invaderPic.Bounds())
 
-	r := rand.New(rand.NewSource(time.Now().UnixNano()))
+	rnd := rand.New(rand.NewSource(time.Now().UnixNano()))
 
 	for i := 1; i <= 100; i++ {
 
 		invaders = append(invaders,Invader{
-			x:  r.Float64() * WINDOW_WIDTH, 
-			y:  r.Float64() * WINDOW_HEIGHT,
-			dx: r.Float64()*100 - 50,
-			dy: r.Float64()*100 - 50,
+			x:  rnd.Float64() * WINDOW_WIDTH, 
+			y:  rnd.Float64() * WINDOW_HEIGHT,
+			dx: rnd.Float64()*100 - 50,
+			dy: rnd.Float64()*100 - 50,
 		} )
 
 	}
