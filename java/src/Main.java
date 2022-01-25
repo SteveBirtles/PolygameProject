@@ -67,7 +67,6 @@ public class Main {
 
         for (var k : keysPressed) {
             if (k == KeyCode.ESCAPE) {
-                System.out.println("Terminating Application...");
                 System.exit(0);
             }
         }
@@ -97,8 +96,7 @@ public class Main {
     }
 
     public static void start() {
-        System.out.println("Application Starting...");
-
+      
         var rnd = new Random();
 
         var root = new Group();
@@ -110,8 +108,7 @@ public class Main {
         stage.setResizable(false);
         stage.setFullScreen(true);
         stage.setScene(scene);
-        stage.setOnCloseRequest(we -> {
-            System.out.println("Terminating Application...");
+        stage.setOnCloseRequest(we -> {            
             System.exit(0);
         });
         stage.show();
