@@ -14,17 +14,21 @@ function preload() {
   invaderSprite = loadImage("resources/sprite.png");
 }
 
+function newInvader(x, y, dx, dy) {
+  return {x, y, dx, dy}
+}
+
 function setup() {
   createCanvas(WINDOW_WIDTH, WINDOW_HEIGHT, P2D);
   frameRate(60);
 
   for (let i = 0; i < 100; i++) {
-    invaders.push({
-      x: Math.random() * WINDOW_WIDTH,
-      y: Math.random() * WINDOW_HEIGHT,
-      dx: Math.random() * 100 - 50,
-      dy: Math.random() * 100 - 50,      
-    })
+    invaders.push(newInvader(
+      Math.random() * WINDOW_WIDTH,
+      Math.random() * WINDOW_HEIGHT,
+      Math.random() * 100 - 50,
+      Math.random() * 100 - 50,      
+    ))
   }
 
 }

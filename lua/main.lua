@@ -3,6 +3,18 @@ WINDOW_HEIGHT = 1080
 
 invaders = {}
 
+function newInvader(x, y, dx, dy) 
+
+    return {
+        x = x,
+        y = y,
+        dx = dx,
+        dy = dy
+    }
+
+end
+
+
 function love.load()
 
     love.window.setMode(WINDOW_WIDTH, WINDOW_HEIGHT, {
@@ -12,12 +24,12 @@ function love.load()
     invaderImage = love.graphics.newImage("resources/sprite.png")
 
     for i = 1, 100 do  
-        table.insert(invaders, {
-          x = math.random(0, WINDOW_WIDTH),
-          y = math.random(0, WINDOW_HEIGHT),
-          dx = math.random(-50, 50),
-          dy = math.random(-50, 50)
-        })
+        table.insert(invaders, newInvader(
+            math.random(0, WINDOW_WIDTH),
+            math.random(0, WINDOW_HEIGHT),
+            math.random(-50, 50),
+            math.random(-50, 50)
+        ))
       end
       
 end
